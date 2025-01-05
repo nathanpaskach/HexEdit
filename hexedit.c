@@ -81,6 +81,8 @@ int main(int argc, char *argv[])
 			path_to_open++;
 		}
 		f = fopen(path_to_open, "ab+");
+        // Get file path
+        strcpy(file.path, inbuf);
 		
 		#else
 		
@@ -107,6 +109,7 @@ int main(int argc, char *argv[])
 		if (GetOpenFileName(&ofn) == TRUE)
 		{
 			f = fopen(ofn.lpstrFile, "ab+");
+            strcpy(file.path, ofn.lpstrFile);
 		}
 		else
 		{
@@ -119,22 +122,21 @@ int main(int argc, char *argv[])
 	// Get file size
 	fseek(f, 0, SEEK_END);
 	file.size = ftell(f);
-	// Get file path and name
-	strcpy(file.path, inbuf);
-	char *fname = strrchr(inbuf, '\\');
-	if(fname == NULL)
-	{
-		fname = strrchr(inbuf, '/');
-	}
-	if(fname != NULL)
-	{
-		fname++;
-		strcpy(file.name, fname);
-	}
-	else
-	{
-		strcpy(file.name, inbuf);
-	}
+    // Get file name
+    char *fname = strrchr(file.path, '\\');
+    if(fname == NULL)
+    {
+        fname = strrchr(file.path, '/');
+    }
+    if(fname != NULL)
+    {
+        fname++;
+        strcpy(file.name, fname);
+    }
+    else
+    {
+        strcpy(file.name, inbuf);
+    }
 	// Read the file into the data char *
 	file.block_size = 1024;
 	file.allocated_size = (file.size / file.block_size + 1) * file.block_size;
@@ -431,7 +433,8 @@ void save_file(file_t *file, FILE *f)
 	f = fopen(file->path, "wb");
 	if(f == NULL)
 	{
-		mvaddstr(1, 0, "FAILED TO SAVE FILE!");
+		mvaddstr(1, 0, "FAILED TO SAVE FILE TO");
+		mvaddstr(1, 1, file->path);
 		getch();
 		return;
 	}

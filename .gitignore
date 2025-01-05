@@ -4,6 +4,9 @@
 # GIMP projects
 *.xcf
 
+# Windows resources
+*.res
+
 # Object files
 *.o
 *.ko
